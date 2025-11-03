@@ -1,0 +1,218 @@
+"use client";
+import { useState } from "react";
+import ProductCard from "./components/ProductCard";
+
+const products = [
+  {
+    id: "1",
+    name: "Luvas de Couro Vaqueta",
+    refs: "L001",
+    description:
+      "Luvas de couro vaqueta de alta resistência, confortáveis e ideais para trabalhos pesados. Acabamento reforçado, costura dupla, permitem excelente destreza manual e proteção contra abrasões e cortes.",
+    images: [
+      "/images/produtos/luva01-1.png",
+      "/images/produtos/luva01-3.png",
+      "/images/produtos/luva01-1.png",
+      "/images/produtos/luva01-3.png",
+    ],
+  },
+  {
+    id: "2",
+    name: "Luvas de Couro Raspa",
+    refs: "L002",
+    description:
+      "Luvas de couro raspa, ideais para manutenção, jardinagem ou manuseio de materiais pesados. Oferecem excelente durabilidade e proteção contra cortes superficiais.",
+    images: [
+      "/images/produtos/luva01-2.png",
+      "/images/produtos/luva01-4.png",
+      "/images/produtos/luva01-2.png",
+      "/images/produtos/luva01-4.png",
+    ],
+  },
+  {
+    id: "3",
+    name: "Luvas Vaqueta com Punho",
+    refs: "L003",
+    description:
+      "Luvas de vaqueta com punho estendido, oferecendo proteção adicional para punho e antebraço. Indicado para indústrias e trabalhos que exigem segurança extra sem perder a destreza.",
+    images: [
+      "/images/produtos/luva01-3.png",
+      "/images/produtos/luva01-1.png",
+      "/images/produtos/luva01-3.png",
+      "/images/produtos/luva01-1.png",
+    ],
+  },
+  {
+    id: "4",
+    name: "Luvas Raspa Reforçada",
+    refs: "L004",
+    description:
+      "Luvas de raspa reforçada, com costura dupla e punho longo, perfeitas para manuseio de materiais abrasivos ou quentes. Alta durabilidade e conforto mesmo em uso prolongado.",
+    images: [
+      "/images/produtos/luva01-4.png",
+      "/images/produtos/luva01-2.png",
+      "/images/produtos/luva01-4.png",
+      "/images/produtos/luva01-2.png",
+    ],
+  },
+  {
+    id: "5",
+    name: "Luvas Raspa Básica",
+    refs: "L005",
+    description:
+      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    images: [
+      "/images/produtos/luva01-2.png",
+      "/images/produtos/luva01-3.png",
+      "/images/produtos/luva01-1.png",
+      "/images/produtos/luva01-4.png",
+    ],
+  },
+];
+
+export default function Home() {
+  const [selectedProduct, setSelectedProduct] = useState(products[0]);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [showMobileDetail, setShowMobileDetail] = useState(false);
+
+  const handleNextImage = () => {
+    setCurrentImage((prev) => (prev + 1) % selectedProduct.images.length);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImage((prev) =>
+      prev === 0 ? selectedProduct.images.length - 1 : prev - 1
+    );
+  };
+
+  const handleCardClick = (product: typeof products[0]) => {
+    setSelectedProduct(product);
+    setCurrentImage(0);
+    setShowMobileDetail(true); // mostra detalhes no mobile
+  };
+
+  return (
+    <main className="min-h-screen flex flex-col items-center bg-gray-50">
+      {/* Banner */}
+      <section
+        className="w-full h-[200px] sm:h-[400px] bg-cover bg-top flex items-center justify-center"
+        style={{ backgroundImage: "url('/images/banner.jpg')" }}
+      >
+        <img
+          src="/images/logo.png"
+          alt="Logo"
+          className="w-[60%] sm:w-[20%] h-auto drop-shadow-lg"
+        />
+      </section>
+
+      {/* Título */}
+      <div className="flex relative h-20 sm:h-52 justify-center items-center w-full mb-20">
+        <div className="absolute top-[-22%] bg-red-700 w-full sm:w-3/6 left-0 h-20 sm:h-52"></div>
+        <h2 className="absolute top-[-28%] text-2xl sm:text-[7vw] font-semibold mt-8 mb-6 w-full text-center sm:text-left pl-0 sm:pl-[5rem] h-20 sm:h-52 text-white">
+          CATÁLOGO
+        </h2>
+      </div>
+
+      {/* Produtos */}
+      <div className="flex h-full w-full justify-center items-start gap-8 px-6">
+        {/* Lado esquerdo: Detalhes do produto */}
+        <div
+          className={`w-full sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col  mb-20 absolute sm:relative 
+          ${showMobileDetail ? "fixed top-1/5 left-0 z-50 block sm:flex h-[70%] bg-white p-6" : "hidden sm:flex"}`}
+        >
+          <div className="w-full h-full">
+            <img
+              src={selectedProduct.images[currentImage]}
+              alt={selectedProduct.name}
+              className="w-full h-full object-contain"
+            />
+            <button
+              onClick={handlePrevImage}
+              className="absolute top-1/3 left-0.5 -translate-y-1/2 cursor-pointer text-4xl sm:text-[2vw] text-gray-600 hover:text-red-700 p-2"
+            >
+              ◀
+            </button>
+            <button
+              onClick={handleNextImage}
+              className="absolute top-1/3 right-0.5 -translate-y-1/2 cursor-pointer text-4xl sm:text-[2vw] text-gray-600 hover:text-red-700 p-2"
+            >
+              ▶
+            </button>
+          </div>
+
+          <h3 className="mt-4 text-xl font-semibold text-left">
+            {selectedProduct.name}
+          </h3>
+          <p className="mt-2 text-gray-700 text-left pb-10">
+            {selectedProduct.description}
+          </p>
+
+          <div className="absolute bottom-4 right-4 bg-black text-white px-6 py-2 text-sm font-semibold">
+            {selectedProduct.refs}
+          </div>
+
+          {/* Botão fechar mobile */}
+          <button
+            className="sm:hidden absolute top-4 right-4 text-2xl font-bold text-red-700"
+            onClick={() => setShowMobileDetail(false)}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Lado direito: Grid de produtos */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 w-full sm:w-4/6">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              name={product.name}
+              refs={product.refs}
+              image={product.images[0]}
+              selected={selectedProduct.id === product.id}
+              onClick={() => handleCardClick(product)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer
+        className="w-full h-[300px] pt-8 sm:pt-0 bg-black text-white mt-12 bg-bottom bg-cover"
+        style={{ backgroundImage: "url('/images/banner.jpg')" }}
+      >
+        <div className="max-w-6xl h-full mx-auto flex flex-col sm:flex-row items-center justify-between py-6 px-6 gap-4">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <img src="/images/logo.png" alt="Logo" className="w-60 h-auto" />
+          </div>
+
+          {/* Separador */}
+          <div className="hidden sm:block h-[80%] border-l border-gray-500"></div>
+
+          {/* WhatsApp */}
+          <div className="flex items-center gap-2 sm:text-xl">
+            <span className="font-semibold">WhatsApp:</span>
+            <a
+              href="https://wa.me/5511999999999"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-red-600"
+            >
+              (11) 99999-9999
+            </a>
+          </div>
+
+          {/* Separador */}
+          <div className="hidden sm:block h-[80%] border-l border-gray-500"></div>
+
+          {/* Endereço */}
+          <div className="flex items-center gap-2 text-sm sm:text-xl">
+            <span className="font-semibold">Endereço:</span>
+            <span>Rua Exemplo, 123 - São Paulo/SP</span>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
