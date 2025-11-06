@@ -197,10 +197,12 @@ useEffect(() => {
       {/* Produtos */}
       <div className="flex h-full w-full justify-center items-center sm:items-start gap-8 px-6 relative">
         {/* Lado esquerdo: Detalhes */}
-        <div
-          className={`w-[95%] sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col mb-20 absolute sm:relative 
-          ${showMobileDetail ? "fixed top-1/5 left-[50%] translate-x-[-50%] z-50 block sm:flex h-[70%] bg-white p-6" : "hidden sm:flex"}`}
+
+          <div
+          className={`w-full sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col mb-20 transition-all duration-300
+          ${showMobileDetail ? "fixed top-[10%] left-[50%] translate-x-[-50%] z-50 h-[80%] bg-white sm:relative sm:h-auto" : "hidden sm:flex"}`}
         >
+
           <div
           ref={imgContainerRef}
           className="w-full h-[48%] relative overflow-hidden bg-white flex items-center justify-center"
