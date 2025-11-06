@@ -5,10 +5,9 @@ import ProductCard from "./components/ProductCard";
 const products = [
   {
     id: "1",
-    name: "Luvas de Couro Vaqueta",
+    name: "nome da luva",
     refs: "L001",
-    description:
-      "Luvas de couro vaqueta de alta resistência, confortáveis e ideais para trabalhos pesados. Acabamento reforçado, costura dupla, permitem excelente destreza manual e proteção contra abrasões e cortes.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva01-1.png",
       "/images/produtos/luva01-2.png",
@@ -17,10 +16,9 @@ const products = [
   },
   {
     id: "2",
-    name: "Luvas de Couro Raspa",
+    name: "nome da luva",
     refs: "L002",
-    description:
-      "Luvas de couro raspa, ideais para manutenção, jardinagem ou manuseio de materiais pesados. Oferecem excelente durabilidade e proteção contra cortes superficiais.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva02-1.png",
       "/images/produtos/luva02-2.png",
@@ -29,10 +27,9 @@ const products = [
   },
   {
     id: "3",
-    name: "Luvas Vaqueta com Punho",
+    name: "nome da luva",
     refs: "L003",
-    description:
-      "Luvas de vaqueta com punho estendido, oferecendo proteção adicional para punho e antebraço. Indicado para indústrias e trabalhos que exigem segurança extra sem perder a destreza.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva03-1.png",
       "/images/produtos/luva03-2.png",
@@ -41,10 +38,9 @@ const products = [
   },
   {
     id: "4",
-    name: "Luvas Raspa Reforçada",
+    name: "nome da luva",
     refs: "L004",
-    description:
-      "Luvas de raspa reforçada, com costura dupla e punho longo, perfeitas para manuseio de materiais abrasivos ou quentes. Alta durabilidade e conforto mesmo em uso prolongado.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva04-1.png",
       "/images/produtos/luva04-2.png",
@@ -53,10 +49,9 @@ const products = [
   },
   {
     id: "5",
-    name: "Luvas Raspa Básica",
+    name: "nome da luva",
     refs: "L005",
-    description:
-      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva05-1.png",
       "/images/produtos/luva05-2.png",
@@ -65,10 +60,9 @@ const products = [
   },
   {
     id: "6",
-    name: "Luvas Raspa Básica",
+    name: "nome da luva",
     refs: "L006",
-    description:
-      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva06-1.png",
       "/images/produtos/luva06-2.png",
@@ -77,10 +71,9 @@ const products = [
   },
   {
     id: "7",
-    name: "Luvas Raspa Básica",
+    name: "nome da luva",
     refs: "L007",
-    description:
-      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva07-1.png",
       "/images/produtos/luva07-2.png",
@@ -89,10 +82,9 @@ const products = [
   },
   {
     id: "8",
-    name: "Luvas Raspa Básica",
+    name: "nome da luva",
     refs: "L008",
-    description:
-      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    description: "descricao do produto, TAM: G GG",
     images: [
       "/images/produtos/luva08-1.png",
       "/images/produtos/luva08-2.png",
@@ -100,6 +92,7 @@ const products = [
     ],
   },
 ];
+
 
 export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState(products[0]);
