@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ProductCard from "./components/ProductCard";
 
 const products = [
@@ -11,8 +11,7 @@ const products = [
       "Luvas de couro vaqueta de alta resistência, confortáveis e ideais para trabalhos pesados. Acabamento reforçado, costura dupla, permitem excelente destreza manual e proteção contra abrasões e cortes.",
     images: [
       "/images/produtos/luva01-1.png",
-      "/images/produtos/luva01-3.png",
-      "/images/produtos/luva01-1.png",
+      "/images/produtos/luva01-2.png",
       "/images/produtos/luva01-3.png",
     ],
   },
@@ -23,10 +22,9 @@ const products = [
     description:
       "Luvas de couro raspa, ideais para manutenção, jardinagem ou manuseio de materiais pesados. Oferecem excelente durabilidade e proteção contra cortes superficiais.",
     images: [
-      "/images/produtos/luva01-2.png",
-      "/images/produtos/luva01-4.png",
-      "/images/produtos/luva01-2.png",
-      "/images/produtos/luva01-4.png",
+      "/images/produtos/luva02-1.png",
+      "/images/produtos/luva02-2.png",
+      "/images/produtos/luva02-3.png",
     ],
   },
   {
@@ -36,10 +34,9 @@ const products = [
     description:
       "Luvas de vaqueta com punho estendido, oferecendo proteção adicional para punho e antebraço. Indicado para indústrias e trabalhos que exigem segurança extra sem perder a destreza.",
     images: [
-      "/images/produtos/luva01-3.png",
-      "/images/produtos/luva01-1.png",
-      "/images/produtos/luva01-3.png",
-      "/images/produtos/luva01-1.png",
+      "/images/produtos/luva03-1.png",
+      "/images/produtos/luva03-2.png",
+      "/images/produtos/luva03-3.png",
     ],
   },
   {
@@ -49,10 +46,9 @@ const products = [
     description:
       "Luvas de raspa reforçada, com costura dupla e punho longo, perfeitas para manuseio de materiais abrasivos ou quentes. Alta durabilidade e conforto mesmo em uso prolongado.",
     images: [
-      "/images/produtos/luva01-4.png",
-      "/images/produtos/luva01-2.png",
-      "/images/produtos/luva01-4.png",
-      "/images/produtos/luva01-2.png",
+      "/images/produtos/luva04-1.png",
+      "/images/produtos/luva04-2.png",
+      "/images/produtos/luva04-3.png",
     ],
   },
   {
@@ -62,10 +58,45 @@ const products = [
     description:
       "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
     images: [
-      "/images/produtos/luva01-2.png",
-      "/images/produtos/luva01-3.png",
-      "/images/produtos/luva01-1.png",
-      "/images/produtos/luva01-4.png",
+      "/images/produtos/luva05-1.png",
+      "/images/produtos/luva05-2.png",
+      "/images/produtos/luva05-3.png",
+    ],
+  },
+  {
+    id: "6",
+    name: "Luvas Raspa Básica",
+    refs: "L006",
+    description:
+      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    images: [
+      "/images/produtos/luva06-1.png",
+      "/images/produtos/luva06-2.png",
+      "/images/produtos/luva06-3.png",
+    ],
+  },
+  {
+    id: "7",
+    name: "Luvas Raspa Básica",
+    refs: "L007",
+    description:
+      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    images: [
+      "/images/produtos/luva07-1.png",
+      "/images/produtos/luva07-2.png",
+      "/images/produtos/luva07-3.png",
+    ],
+  },
+  {
+    id: "8",
+    name: "Luvas Raspa Básica",
+    refs: "L008",
+    description:
+      "Luvas de raspa básica, ideais para trabalhos leves a médios, oferecem boa proteção e conforto. Perfeitas para quem precisa de proteção diária sem perder a mobilidade das mãos.",
+    images: [
+      "/images/produtos/luva08-1.png",
+      "/images/produtos/luva08-2.png",
+      "/images/produtos/luva08-3.png",
     ],
   },
 ];
@@ -74,6 +105,15 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState(products[0]);
   const [currentImage, setCurrentImage] = useState(0);
   const [showMobileDetail, setShowMobileDetail] = useState(false);
+
+  // Para o efeito de lupa
+  const imgContainerRef = useRef<HTMLDivElement | null>(null);
+  const [lensVisible, setLensVisible] = useState(false);
+  const [lensPos, setLensPos] = useState({ x: 0, y: 0 });
+  const [lensBgPos, setLensBgPos] = useState({ x: "0%", y: "0%" });
+
+  const LENS_SIZE = 200; // tamanho do quadrado da lupa
+  const ZOOM_FACTOR = 0.7; // intensidade do zoom
 
   const handleNextImage = () => {
     setCurrentImage((prev) => (prev + 1) % selectedProduct.images.length);
@@ -88,7 +128,35 @@ export default function Home() {
   const handleCardClick = (product: typeof products[0]) => {
     setSelectedProduct(product);
     setCurrentImage(0);
-    setShowMobileDetail(true); // mostra detalhes no mobile
+    setShowMobileDetail(true);
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent) => {
+    if (!imgContainerRef.current) return;
+    setLensVisible(true);
+    handleMouseMove(e);
+  };
+
+  const handleMouseLeave = () => {
+    setLensVisible(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const container = imgContainerRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const cx = Math.max(0, Math.min(x, rect.width));
+    const cy = Math.max(0, Math.min(y, rect.height));
+    const left = cx - LENS_SIZE / 2;
+    const top = cy - LENS_SIZE / 2;
+    setLensPos({ x: left, y: top });
+
+    const bgXPercent = (cx / rect.width) * 100;
+    const bgYPercent = (cy / rect.height) * 100;
+    setLensBgPos({ x: `${bgXPercent}%`, y: `${bgYPercent}%` });
   };
 
   return (
@@ -115,29 +183,59 @@ export default function Home() {
 
       {/* Produtos */}
       <div className="flex h-full w-full justify-center items-start gap-8 px-6">
-        {/* Lado esquerdo: Detalhes do produto */}
+        {/* Lado esquerdo: Detalhes */}
         <div
-          className={`w-full sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col  mb-20 absolute sm:relative 
+          className={`w-full sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col mb-20 absolute sm:relative 
           ${showMobileDetail ? "fixed top-1/5 left-0 z-50 block sm:flex h-[70%] bg-white p-6" : "hidden sm:flex"}`}
         >
-          <div className="w-full h-full">
+          <div
+            ref={imgContainerRef}
+            className="w-full h-[48%] relative overflow-hidden bg-white flex items-center justify-center cursor-zoom-in"
+            onMouseEnter={handleMouseEnter}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
             <img
               src={selectedProduct.images[currentImage]}
               alt={selectedProduct.name}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain select-none pointer-events-none"
+              draggable={false}
             />
+
             <button
               onClick={handlePrevImage}
-              className="absolute top-1/3 left-0.5 -translate-y-1/2 cursor-pointer text-4xl sm:text-[2vw] text-gray-600 hover:text-red-700 p-2"
+              className="absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pr-4 py-2  z-50 bg-white/70 rounded-sm shadow"
             >
               ◀
             </button>
             <button
               onClick={handleNextImage}
-              className="absolute top-1/3 right-0.5 -translate-y-1/2 cursor-pointer text-4xl sm:text-[2vw] text-gray-600 hover:text-red-700 p-2"
+              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pl-4 py-2 z-50 bg-white/60 rounded-sm shadow"
             >
               ▶
             </button>
+
+            {/* Lente de zoom */}
+            {lensVisible && (
+              <div
+                className="absolute z-30 pointer-events-none  shadow-lg  "
+                style={{
+                  width: `${LENS_SIZE}px`,
+                  height: `${LENS_SIZE}px`,
+                  left: `${lensPos.x}px`,
+                  top: `${lensPos.y}px`,
+                  backgroundImage: `url(${selectedProduct.images[currentImage]})`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: `${
+                    imgContainerRef.current
+                      ? imgContainerRef.current.getBoundingClientRect().width *
+                        ZOOM_FACTOR
+                      : 100
+                  }% auto`,
+                  backgroundPosition: `${lensBgPos.x} ${lensBgPos.y}`,
+                }}
+              />
+            )}
           </div>
 
           <h3 className="mt-4 text-xl font-semibold text-left">
@@ -151,7 +249,6 @@ export default function Home() {
             {selectedProduct.refs}
           </div>
 
-          {/* Botão fechar mobile */}
           <button
             className="sm:hidden absolute top-4 right-4 text-2xl font-bold text-red-700"
             onClick={() => setShowMobileDetail(false)}
@@ -160,7 +257,7 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Lado direito: Grid de produtos */}
+        {/* Lado direito: Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 w-full sm:w-4/6">
           {products.map((product) => (
             <ProductCard
@@ -168,7 +265,7 @@ export default function Home() {
               id={product.id}
               name={product.name}
               refs={product.refs}
-              image={product.images[0]}
+              image={product.images[1]} // sempre a segunda imagem (luva0X-2)
               selected={selectedProduct.id === product.id}
               onClick={() => handleCardClick(product)}
             />
@@ -182,15 +279,10 @@ export default function Home() {
         style={{ backgroundImage: "url('/images/banner.jpg')" }}
       >
         <div className="max-w-6xl h-full mx-auto flex flex-col sm:flex-row items-center justify-between py-6 px-6 gap-4">
-          {/* Logo */}
           <div className="flex items-center gap-2">
             <img src="/images/logo.png" alt="Logo" className="w-60 h-auto" />
           </div>
-
-          {/* Separador */}
           <div className="hidden sm:block h-[80%] border-l border-gray-500"></div>
-
-          {/* WhatsApp */}
           <div className="flex items-center gap-2 sm:text-xl">
             <span className="font-semibold">WhatsApp:</span>
             <a
@@ -202,11 +294,7 @@ export default function Home() {
               (11) 99999-9999
             </a>
           </div>
-
-          {/* Separador */}
           <div className="hidden sm:block h-[80%] border-l border-gray-500"></div>
-
-          {/* Endereço */}
           <div className="flex items-center gap-2 text-sm sm:text-xl">
             <span className="font-semibold">Endereço:</span>
             <span>Rua Exemplo, 123 - São Paulo/SP</span>
