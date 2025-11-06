@@ -199,8 +199,8 @@ useEffect(() => {
         {/* Lado esquerdo: Detalhes */}
 
           <div
-          className={`w-full sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col mb-20 transition-all duration-300
-          ${showMobileDetail ? "fixed top-[10%] left-[50%] translate-x-[-50%] z-50 h-[80%] bg-white sm:relative sm:h-auto" : "hidden sm:flex"}`}
+          className={`w-full sm:w-2/6 bg-white p-6 border left-0  sm:left-[50%] translate-x-[0%] sm:translate-x-[-50%] border-black/80 flex flex-col mb-20 transition-all duration-300
+          ${showMobileDetail ? "fixed top-[10%]  z-50 h-[80%] bg-white sm:relative sm:h-auto" : "hidden sm:flex"}`}
         >
 
           <div
