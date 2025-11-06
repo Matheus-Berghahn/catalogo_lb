@@ -32,3 +32,12 @@ body {
 .animate-fadeIn {
   animation: fadeIn 1s ease-out forwards;
 }
+
+::-webkit-scrollbar {
+  width: 12px; 
+  background-color: white; 
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c10007;
+}

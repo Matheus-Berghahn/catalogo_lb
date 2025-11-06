@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ProductCard from "./components/ProductCard";
 
 const products = [
@@ -115,6 +115,19 @@ export default function Home() {
   const LENS_SIZE = 200; // tamanho do quadrado da lupa
   const ZOOM_FACTOR = 0.7; // intensidade do zoom
 
+  const [isDesktop, setIsDesktop] = useState(false);
+
+useEffect(() => {
+  // Detecta se há mouse (telas desktop)
+  const checkDesktop = window.matchMedia("(pointer: fine)").matches;
+  setIsDesktop(checkDesktop);
+
+  // Também atualiza se redimensionar
+  const listener = () => setIsDesktop(window.matchMedia("(pointer: fine)").matches);
+  window.addEventListener("resize", listener);
+  return () => window.removeEventListener("resize", listener);
+}, []);
+
   const handleNextImage = () => {
     setCurrentImage((prev) => (prev + 1) % selectedProduct.images.length);
   };
@@ -182,19 +195,24 @@ export default function Home() {
       </div>
 
       {/* Produtos */}
-      <div className="flex h-full w-full justify-center items-start gap-8 px-6">
+      <div className="flex h-full w-full justify-center items-center sm:items-start gap-8 px-6 relative">
         {/* Lado esquerdo: Detalhes */}
         <div
-          className={`w-full sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col mb-20 absolute sm:relative 
-          ${showMobileDetail ? "fixed top-1/5 left-0 z-50 block sm:flex h-[70%] bg-white p-6" : "hidden sm:flex"}`}
+          className={`w-[95%] sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col mb-20 absolute sm:relative 
+          ${showMobileDetail ? "fixed top-1/5 left-[50%] translate-x-[-50%] z-50 block sm:flex h-[70%] bg-white p-6" : "hidden sm:flex"}`}
         >
           <div
-            ref={imgContainerRef}
-            className="w-full h-[48%] relative overflow-hidden bg-white flex items-center justify-center cursor-zoom-in"
-            onMouseEnter={handleMouseEnter}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-          >
+          ref={imgContainerRef}
+          className="w-full h-[48%] relative overflow-hidden bg-white flex items-center justify-center"
+          {...(isDesktop
+            ? {
+                onMouseEnter: handleMouseEnter,
+                onMouseMove: handleMouseMove,
+                onMouseLeave: handleMouseLeave,
+              }
+            : {})}
+        >
+
             <img
               src={selectedProduct.images[currentImage]}
               alt={selectedProduct.name}
@@ -204,13 +222,13 @@ export default function Home() {
 
             <button
               onClick={handlePrevImage}
-              className="absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pr-4 py-2  z-50 bg-white/70 rounded-sm shadow"
+              className="absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pr-4 py-2  z-50 bg-white/70 "
             >
               ◀
             </button>
             <button
               onClick={handleNextImage}
-              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pl-4 py-2 z-50 bg-white/60 rounded-sm shadow"
+              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pl-4 py-2 z-50 bg-white/60 "
             >
               ▶
             </button>
