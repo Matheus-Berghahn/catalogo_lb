@@ -93,33 +93,29 @@ const products = [
   },
 ];
 
-
 export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState(products[0]);
   const [currentImage, setCurrentImage] = useState(0);
   const [showMobileDetail, setShowMobileDetail] = useState(false);
 
-  // Para o efeito de lupa
   const imgContainerRef = useRef<HTMLDivElement | null>(null);
-  const [lensVisible, setLensVisible] = useState(false);
-  const [lensPos, setLensPos] = useState({ x: 0, y: 0 });
-  const [lensBgPos, setLensBgPos] = useState({ x: "0%", y: "0%" });
 
-  const LENS_SIZE = 200; // tamanho do quadrado da lupa
-  const ZOOM_FACTOR = 0.7; // intensidade do zoom
+  const [isZoomEnabled, setIsZoomEnabled] = useState(false);
+
+
 
   const [isDesktop, setIsDesktop] = useState(false);
 
-useEffect(() => {
-  // Detecta se há mouse (telas desktop)
-  const checkDesktop = window.matchMedia("(pointer: fine)").matches;
-  setIsDesktop(checkDesktop);
+  useEffect(() => {
+    const checkDesktop = window.matchMedia("(pointer: fine)").matches;
+    setIsDesktop(checkDesktop);
 
-  // Também atualiza se redimensionar
-  const listener = () => setIsDesktop(window.matchMedia("(pointer: fine)").matches);
-  window.addEventListener("resize", listener);
-  return () => window.removeEventListener("resize", listener);
-}, []);
+    const listener = () =>
+      setIsDesktop(window.matchMedia("(pointer: fine)").matches);
+
+    window.addEventListener("resize", listener);
+    return () => window.removeEventListener("resize", listener);
+  }, []);
 
   const handleNextImage = () => {
     setCurrentImage((prev) => (prev + 1) % selectedProduct.images.length);
@@ -135,34 +131,6 @@ useEffect(() => {
     setSelectedProduct(product);
     setCurrentImage(0);
     setShowMobileDetail(true);
-  };
-
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    if (!imgContainerRef.current) return;
-    setLensVisible(true);
-    handleMouseMove(e);
-  };
-
-  const handleMouseLeave = () => {
-    setLensVisible(false);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const container = imgContainerRef.current;
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cx = Math.max(0, Math.min(x, rect.width));
-    const cy = Math.max(0, Math.min(y, rect.height));
-    const left = cx - LENS_SIZE / 2;
-    const top = cy - LENS_SIZE / 2;
-    setLensPos({ x: left, y: top });
-
-    const bgXPercent = (cx / rect.width) * 100;
-    const bgYPercent = (cy / rect.height) * 100;
-    setLensBgPos({ x: `${bgXPercent}%`, y: `${bgYPercent}%` });
   };
 
   return (
@@ -192,62 +160,64 @@ useEffect(() => {
         {/* Lado esquerdo: Detalhes */}
         <div
           className={`w-full sm:w-2/6 bg-white p-6 border border-black/80 flex flex-col mb-20 absolute sm:relative 
-          ${showMobileDetail ? "fixed top-1/5 left-0 z-50 block sm:flex h-[70%] bg-white p-6" : "hidden sm:flex"}`}
+          ${
+            showMobileDetail
+              ? "fixed top-1/5 left-0 z-50 block sm:flex h-[70%] bg-white p-6"
+              : "hidden sm:flex"
+          }`}
         >
-          <div
+       {/* IMAGEM */}
+        <div
           ref={imgContainerRef}
-          className="w-full h-[48%] relative overflow-hidden bg-white flex items-center justify-center"
-          {...(isDesktop
-            ? {
-                onMouseEnter: handleMouseEnter,
-                onMouseMove: handleMouseMove,
-                onMouseLeave: handleMouseLeave,
-              }
-            : {})}
+          className={`w-full h-[48%] relative overflow-hidden bg-white flex items-center justify-center ${
+            isZoomEnabled ? "zoom-active" : ""
+          }`}
+          onMouseMove={(e) => {
+            if (!isZoomEnabled) return;
+
+            const container = imgContainerRef.current;
+            if (!container) return;
+
+            const rect = container.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            container.style.setProperty("--zoom-x", `${x}%`);
+            container.style.setProperty("--zoom-y", `${y}%`);
+          }}
+          onMouseEnter={() => setIsZoomEnabled(true)}
+          onMouseLeave={() => setIsZoomEnabled(false)}
         >
+          <img
+            src={selectedProduct.images[currentImage]}
+            alt={selectedProduct.name}
+            className="zoom-image select-none pointer-events-none"
+            draggable={false}
+          />
 
-            <img
-              src={selectedProduct.images[currentImage]}
-              alt={selectedProduct.name}
-              className="w-full h-full object-contain select-none pointer-events-none"
-              draggable={false}
-            />
+          {/* SETA ESQUERDA */}
+          <button
+            onClick={handlePrevImage}
+            className="absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pr-4 py-2 z-50 bg-white/70"
+            onMouseEnter={() => setIsZoomEnabled(false)}  // 👈 DESATIVA ZOOM
+            onMouseLeave={() => setIsZoomEnabled(true)}   // 👈 ATIVA QUANDO SAI
+          >
+            ◀
+          </button>
 
-            <button
-              onClick={handlePrevImage}
-              className="absolute top-1/2 left-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pr-4 py-2  z-50 bg-white/70 "
-            >
-              ◀
-            </button>
-            <button
-              onClick={handleNextImage}
-              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pl-4 py-2 z-50 bg-white/60 "
-            >
-              ▶
-            </button>
+  {/* SETA DIREITA */}
+  <button
+    onClick={handleNextImage}
+    className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-3xl sm:text-[2vw] text-gray-600 hover:text-red-700 px-2 pl-4 py-2 z-50 bg-white/60"
+    onMouseEnter={() => setIsZoomEnabled(false)}
+    onMouseLeave={() => setIsZoomEnabled(true)}
+  >
+    ▶
+  </button>
+</div>
 
-            {/* Lente de zoom */}
-            {lensVisible && (
-              <div
-                className="absolute z-30 pointer-events-none  shadow-lg  "
-                style={{
-                  width: `${LENS_SIZE}px`,
-                  height: `${LENS_SIZE}px`,
-                  left: `${lensPos.x}px`,
-                  top: `${lensPos.y}px`,
-                  backgroundImage: `url(${selectedProduct.images[currentImage]})`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundSize: `${
-                    imgContainerRef.current
-                      ? imgContainerRef.current.getBoundingClientRect().width *
-                        ZOOM_FACTOR
-                      : 100
-                  }% auto`,
-                  backgroundPosition: `${lensBgPos.x} ${lensBgPos.y}`,
-                }}
-              />
-            )}
-          </div>
+
+
 
           <h3 className="mt-4 text-xl font-semibold text-left">
             {selectedProduct.name}
@@ -268,7 +238,7 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* Lado direito: Cards */}
+        {/* Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 w-full sm:w-4/6">
           {products.map((product) => (
             <ProductCard
@@ -276,7 +246,7 @@ useEffect(() => {
               id={product.id}
               name={product.name}
               refs={product.refs}
-              image={product.images[1]} // sempre a segunda imagem (luva0X-2)
+              image={product.images[0]}
               selected={selectedProduct.id === product.id}
               onClick={() => handleCardClick(product)}
             />

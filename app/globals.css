@@ -41,3 +41,15 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #c10007;
 }
+
+.zoom-image {
+  width: 100%;
+  height: auto;
+  transition: transform 0.2s ease;
+  transform-origin: var(--zoom-x) var(--zoom-y);
+}
+
+.zoom-active .zoom-image {
+  transform: scale(1.8);
+}
+
